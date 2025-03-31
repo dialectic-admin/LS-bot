@@ -110,8 +110,6 @@ The Learning Snippets Bot combines several AWS services in a serverless architec
 ## Development and Extension
 
 The system is designed to be extensible:
-- Additional languages can be supported
-- New content types can be indexed
 - Alternative LLM models can be integrated
 
 ## Environment Variables
