@@ -2,9 +2,6 @@
 
 An intelligent chatbot system that provides context-aware learning snippet assistance and educational content in both English and French. The system leverages AWS services and LangChain to retrieve relevant code snippets and generate natural language responses.
 
-## The Learning Snippets Assistant
-[Learning Snippets Assistant](https://d2f35q3m8jwg3d.cloudfront.net/)
-
 ## System Architecture
 
 The Learning Snippets Bot combines several AWS services in a serverless architecture.
