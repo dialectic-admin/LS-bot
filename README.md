@@ -1,6 +1,6 @@
 # Learning Snippets Bot
 
-An intelligent chatbot system that provides context-aware learning snippet assistance and educational content in both English and French. The system leverages AWS services and LangChain to retrieve relevant code snippets and generate natural language responses.
+A chatbot system that provides context-aware learning snippet assistance and in both English and French. The system leverages AWS services and LangChain to retrieve relevant code snippets and generate natural language responses.
 
 ## System Architecture
 
@@ -120,3 +120,60 @@ The system relies on various environment variables for configuration, including:
 - Table names
 - Authentication settings
 - Performance tuning parameters
+
+## AI Hub Team
+
+**Navaneeth Ramanathan Jawaharlal Nehru**
+
+Principal Investigator
+
+**Andrew Mark Dale**
+
+Research Associate
+
+**Shoaib Shaikh**
+
+Research Assistant
+
+## Use Cases 
+(Initial phase is Use Case 1 & Use Case 2)
+
+### Use Case 1: Snippets Search Tool
+
+**Input**
+Query from team members or clients regarding specific Snippet content or functionality.
+
+**Output**
+AI retrieves relevant content from PDFs and WordPress metadata, providing real-time answers or insights. This supports decision-making for sales, writing, and administrative tasks, improving efficiency.
+
+### Use Case 2: Personalized Snippet Programs
+
+**Input**
+Client-specific requires for a tailored learning program (e.g., topic, industry, skill level, objectives).
+
+**Output**
+AI analyzes client needs, retrieves Snippet data from WordPress, and structures a customized Learning Journey. The program package aligns with client goals, enhancing customer satisfaction and operational efficiency.
+
+### Use Case 3: Tailoring Snippets
+
+**Input** 
+Request for content modification (e.g., topic, language, tone).
+
+**Output**
+AI reviews the PDF, analyzes requested modifications, and generates a revised version. The new PDF includes highlighted edit or comments, clearly indicating the recommended changes, significantly reducing the need for manual editing.
+
+### Use Case 4: Translating Snippets
+
+**Input**
+Request for translating into a target languge, ensuring cultural relevance and sensitivity.
+
+**Output**
+AI translates the Snippet content, preserving context and cultural nuances. The translated version is stored with metadata in WordPress, enabling quick retrieval while minimizing reliance on external translation services.
+
+### Use Case 5: Snippet Concept Writing
+
+**Input** 
+Requirements for a new Snippet concept (e.g., themes, skills, secnarios).
+
+**Output** 
+AI generates a draft Snippet outline, including scenarios, choices, and consequences. The draft aligns with workplace trends, reducing creation time and providing a strong starting point for further development.
