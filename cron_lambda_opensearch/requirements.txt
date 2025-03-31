@@ -1,0 +1,7 @@
+langchain
+langchain_community
+boto3
+opensearch-py
+requests-aws4auth
+langchain_aws
+opensearch-py
