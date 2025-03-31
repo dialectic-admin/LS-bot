@@ -1,6 +1,6 @@
-# Dialectic Vector Indexing System (Full Reindex Version)
+# Learning Snippets Vector Indexing System (Full Reindex Version)
 
-A system for processing, embedding, and indexing educational content in OpenSearch to power the vector search capabilities of the Dialectic Snippet Bot. This variant implements a full reindex strategy rather than incremental updates.
+A system for processing, embedding, and indexing educational content in OpenSearch to power the vector search capabilities of the Learning Snippet Assistant Bot. This variant implements a full reindex strategy rather than incremental updates.
 
 ## System Overview
 
@@ -68,7 +68,7 @@ Main entry point for the AWS Lambda function:
 
 ## Data Flow
 
-1. The Lambda function is triggered (likely on a schedule or by content updates)
+1. The Lambda function is triggered
 2. The function scans DynamoDB to retrieve all snippet data
 3. Raw snippet data is parsed into Document objects with proper metadata
 4. The existing OpenSearch index is completely deleted
