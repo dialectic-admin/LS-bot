@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Snippets Sidekick</title>
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mui/material@5.15.0/umd/material-ui.development.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.23.6/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emotion/react@11.11.3/dist/emotion-react.umd.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emotion/styled@11.11.0/dist/emotion-styled.umd.min.js" crossorigin></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;400;500;600;700&display=swap" />
+    <link rel="icon" href="https://8152648.fs1.hubspotusercontent-na1.net/hub/8152648/hubfs/LS-Icon-Orange@4x.png" type="image/png" />
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const {
+            CssBaseline,
+            ThemeProvider,
+            Typography,
+            TextField,
+            Container,
+            createTheme,
+            Box,
+            Paper,
+            IconButton,
+            CircularProgress,
+            Avatar,
+            alpha,
+            Alert,
+            Select,
+            MenuItem,
+            FormControl,
+            InputLabel,
+            Grid,
+        } = MaterialUI;
+
+        // Theme configuration - Updated with your color preferences
+        const theme = createTheme({
+            palette: {
+                mode: 'light',
+                primary: {
+                    main: '#e51546',
+                },
+                secondary: {
+                    main: '#303030',
+                },
+                background: {
+                    default: '#e51546',
+                    paper: '#ffffff',
+                },
+                text: {
+                    primary: '#303030',
+                    secondary: '#666666',
+                },
+            },
+            typography: {
+                fontFamily: '"Gothic A1", "Roboto", "Helvetica", "Arial", sans-serif',
+                h4: {
+                    fontFamily: '"Gothic A1", sans-serif',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em',
+                },
+            },
+            components: {
+                MuiPaper: {
+                    styleOverrides: {
+                        root: {
+                            backgroundImage: 'none',
+                        },
+                    },
+                },
+            },
+        });
+
+        // Global message store
+        const globalMessageStore = {
+            messages: [],
+            addMessage(message) {
+                this.messages.push(message);
+                return [...this.messages];
+            },
+            updateLastMessage(message) {
+                if (this.messages.length > 0) {
+                    this.messages[this.messages.length - 1] = message;
+                }
+                return [...this.messages];
+            },
+            updateMessageById(id, updates) {
+                this.messages = this.messages.map(msg =>
+                    msg.id === id ? { ...msg, ...updates } : msg
+                );
+                return [...this.messages];
+            },
+            getMessages() {
+                return [...this.messages];
+            }
+        };
+
+
+        const Message = ({ id, text, isBot, isLoading, isStreaming, type }) => (
+            <Box
+                key={id}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    mb: 2,
+                    flexDirection: isBot ? 'row' : 'row-reverse'
+                }}
+            >
+                {isBot ? (
+                    <Avatar
+                        sx={{
+                            m: 1,
+                            boxShadow: 2,
+                            width: 40,
+                            height: 40,
+                        }}
+                        src="https://8152648.fs1.hubspotusercontent-na1.net/hub/8152648/hubfs/LS-Icon-Orange@4x.png"
+                        alt="AI Assistant"
+                    />) : (
+                    <Avatar
+                        sx={{
+                            bgcolor: theme.palette.secondary.main,
+                            color: '#ffffff',
+                            m: 1,
+                            boxShadow: 2,
+                            width: 40,
+                            height: 40,
+                        }}  
+                    >
+                    <span className="material-icons" style={{ color: '#f56d48' }}>person</span>
+                    </Avatar>
+                )}
+                <Paper
+                    elevation={3}
+                    sx={{
+                        p: 2,
+                        maxWidth: '80%',
+                        ml: isBot ? 1 : 'auto',
+                        mr: isBot ? 'auto' : 1,
+                        bgcolor: isBot ? '#2D2428' : '#303030',
+                        color: '#ffffff',
+                        borderRadius: 3,
+                        boxShadow: 3,
+                        position: 'relative',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            width: 0,
+                            height: 0,
+                            borderStyle: 'solid',
+                            ...(isBot
+                                ? {
+                                    left: -8,
+                                    borderWidth: '8px 8px 8px 0',
+                                    borderColor: `transparent #2D2428 transparent transparent`,
+                                }
+                                : {
+                                    right: -8,
+                                    borderWidth: '8px 0 8px 8px',
+                                    borderColor: `transparent transparent transparent #303030`,
+                                }),
+                            top: 15,
+                        }
+                    }}
+                >
+                    <Typography variant="caption" color="#cccccc" sx={{ display: 'block', mb: 1 }}>
+                        {isBot ? `Snippets Sidekick: ${type} Assistant` : 'You'}
+                    </Typography>
+                    {isLoading ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
+                            <CircularProgress size={24} thickness={4} />
+                        </Box>
+                    ) : (
+                        <Typography
+                            component="div"
+                            dangerouslySetInnerHTML={{ __html: text ? marked.parse(text) : '' }}
+                            sx={{
+                                '& p': { m: 0, lineHeight: 1.6, color: '#ffffff' },
+                                '& pre': {
+                                    bgcolor: 'rgba(0, 0, 0, 0.2)',
+                                    p: 1.5,
+                                    borderRadius: 1,
+                                    overflowX: 'auto',
+                                    border: `1px solid rgba(255, 255, 255, 0.1)`,
+                                    my: 1,
+                                },
+                                '& code': {
+                                    fontFamily: 'monospace',
+                                    color: '#e0e0e0',
+                                },
+                                '& a': {
+                                    color: '#ff99a8',
+                                    textDecoration: 'underline',
+                                }
+                            }}
+                        />
+                    )}
+                    {isStreaming && (
+                        <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <CircularProgress size={12} thickness={4} />
+                            <Typography variant="caption" color="#cccccc">
+                                Snippets Sidekick is typing...
+                            </Typography>
+                        </Box>
+                    )}
+                </Paper>
+            </Box>
+        );
+
+        marked.use({
+            renderer: {
+                link(href, title, text) {
+                    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+                }
+            }
+        });
+
+        function App() {
+            const [messages, setMessages] = React.useState([]);
+            const [input, setInput] = React.useState("");
+            const [isLoading, setIsLoading] = React.useState(false);
+            const [isWelcomed, setIsWelcomed] = React.useState(false);
+            const [isConnected, setIsConnected] = React.useState(false);
+            const [error, setError] = React.useState(null);
+            const [language, setLanguage] = React.useState("English");
+            const [type, setType] = React.useState("Chat");
+            const messagesEndRef = React.useRef(null);
+            const WS = React.useRef(null);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
+            const getPlaceholderText = () => {
+                if (!isWelcomed) {
+                    return "Receiving a response...";
+                }
+                
+                if (type === "Program") {
+                    return `Ask me to create a Learning Journey from snippets in ${language} (${type} mode)...`;
+                } 
+                
+                return `Ask me about available snippets in ${language} (${type} mode)...`;
+            };
+            const languageMap = {
+                "English": "en",
+                "French": "fr"
+            };
+    
+
+            // Wrapped in useCallback to ensure it has the latest language value
+            const connectWebSocket = React.useCallback(() => {
+                // Close existing connection if it exists
+                if (WS.current) {
+                    WS.current.close();
+                }
+
+                // Create WebSocket URL with language parameter
+                // Explicitly log the language being used
+                
+                const wsUrl = `wss://xkc3ss0c37.execute-api.ca-central-1.amazonaws.com/production`;
+
+                // Create a WebSocket connection
+                WS.current = new WebSocket(wsUrl);
+
+                WS.current.onopen = () => {
+                    console.log(`WebSocket Connected with language: ${language} and type: ${type}`);
+                    setIsConnected(true);
+                    setIsWelcomed(true);
+                    setError(null); // Clear any previous connection errors
+                };
+
+                WS.current.onclose = () => {
+                    setIsConnected(false);
+                    setError("Connection lost. Please refresh the page.");
+                };
+
+                WS.current.onerror = (error) => {
+                    console.error("WebSocket error:", error);
+                    setError("Failed to connect to the server. Please refresh the page.");
+                };
+
+                WS.current.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+
+                        if (data.type === 'stream') {
+                            // Always set isWelcomed to true when we receive first message
+                            if (!isWelcomed) {
+                                setIsWelcomed(true);
+                            }
+
+                            // Handle streaming data - append the new chunk
+                            setMessages(prevMessages => {
+                                const newMessages = [...prevMessages];
+                                const lastMessage = newMessages[newMessages.length - 1];
+
+                                // If last message is a bot message, update it by appending the new content
+                                if (lastMessage && lastMessage.isBot) {
+                                    newMessages[newMessages.length - 1] = {
+                                        ...lastMessage,
+                                        // Append the new chunk to existing content
+                                        text: lastMessage.text + data.content,
+                                        isStreaming: true
+                                    };
+                                } else {
+                                    // Add new bot message starting with just this chunk
+                                    newMessages.push({
+                                        text: data.content,
+                                        isBot: true,
+                                        isStreaming: true,
+                                        type: type // Use the current type state
+                                    });
+                                }
+
+                                return newMessages;
+                            });
+                        } else if (data.type === 'ping') {
+                            return;
+                        } else if (data.type === 'done') {
+                            setMessages(prevMessages => {
+                                const newMessages = [...prevMessages];
+                                if (newMessages.length > 0) {
+                                    const lastMessage = newMessages[newMessages.length - 1];
+                                    if (lastMessage.isBot) {
+                                        newMessages[newMessages.length - 1] = {
+                                            ...lastMessage,
+                                            isStreaming: false
+                                        };
+                                    }
+                                }
+                                return newMessages;
+                            });
+
+                            // Ensure loading is set to false
+                            setIsLoading(false);
+                        } else if (data.type === 'error') {
+                            // Handle error messages
+                            setError(data.content || "An error occurred");
+                            setIsLoading(false);
+                        }
+                    } catch (e) {
+                        console.error('Error processing message:', e);
+                        setIsLoading(false);
+                    }
+                
+                };
+            }, [language, type, isWelcomed]); // language and type as dependencies
+
+            // Modified handleLanguageChange
+            const handleLanguageChange = (event) => {
+                const newLanguage = event.target.value;
+
+                // Close existing connection
+                if (WS.current) {
+                    try {
+                        WS.current.close();
+                    } catch (e) {
+                        console.error("Error closing websocket:", e);
+                    }
+                    WS.current = null;
+                }
+
+                // Clear state
+                setMessages([]);
+                setInput("");
+                setIsLoading(false);
+                setIsWelcomed(false);
+                setIsConnected(false);
+                setError(null);
+
+                // Set the new language
+                setLanguage(newLanguage);
+            };
+
+            // Added handleTypeChange
+            const handleTypeChange = (event) => {
+                const newType = event.target.value;
+
+                // Close existing connection
+                if (WS.current) {
+                    try {
+                        WS.current.close();
+                    } catch (e) {
+                        console.error("Error closing websocket:", e);
+                    }
+                    WS.current = null;
+                }
+
+                // Clear state
+                setMessages([]);
+                setInput("");
+                setIsLoading(false);
+                setIsWelcomed(false);
+                setIsConnected(false);
+                setError(null);
+
+                // Set the new type
+                setType(newType);
+            };
+
+            // Updated useEffect with language and type dependencies
+            React.useEffect(() => {
+                
+                // Small delay to ensure state is updated
+                const timeoutId = setTimeout(() => {
+                    connectWebSocket();
+                    
+                    // Add debug message
+                    setMessages([{
+                        text: `Language set to: ${language}, Type set to: ${type}`,
+                        isBot: false
+                    }]);
+                    
+                    // Force welcome state after 5 seconds if not set
+                    const welcomeTimeoutId = setTimeout(() => {
+                        if (!isWelcomed) {
+                            setIsWelcomed(true);
+                        }
+                    }, 5000);
+                    
+                    return () => clearTimeout(welcomeTimeoutId);
+                }, 100);
+                
+                return () => {
+                    clearTimeout(timeoutId);
+                    if (WS.current) {
+                        WS.current.close();
+                    }
+                };
+            }, [language, type, connectWebSocket]);
+
+            // Add useEffect hooks for monitoring state and scrolling
+            React.useEffect(() => {
+                // Log states for debugging
+            }, [isConnected, isWelcomed, isLoading]);
+
+            // Scroll to bottom when messages change
+            React.useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!input.trim() || !isConnected || !isWelcomed) return;
+
+                setMessages(prevMessages => [...prevMessages, { text: input, isBot: false }]);
+
+                setIsLoading(true);
+
+                // Send message with both language and type
+                WS.current.send(JSON.stringify({
+                    "action": 'sendMessage', 
+                    "message": input, 
+                    "language": languageMap[language],
+                    "type": type.toLowerCase()
+                }));
+                setInput("");
+            };
+
+            return (
+                <Container
+                    maxWidth="md"
+                    sx={{
+                        height: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        py: 3,
+                        backgroundColor: '#e51546',
+                    }}
+                >
+                    <Box sx={{ mb: 2 }}>
+                        <Typography
+                            variant="h4"
+                            component="h1"
+                            sx={{
+                                fontFamily: '"Gothic A1", sans-serif',
+                                fontWeight: 700,
+                                color: '#ffffff',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 1,
+                                mb: 2,
+                            }}
+                        >
+                        <img src="https://8152648.fs1.hubspotusercontent-na1.net/hub/8152648/hubfs/LS-Icon-Orange@4x.png" alt="Robot" style={{ height: '1.2em', marginLeft: '5px' }} /> Snippets Sidekick: {type} Assistant 
+                        </Typography>
+                        
+                        <Grid container spacing={2} sx={{ mt: 1 }}>
+                            <Grid item xs={6}>
+                                <FormControl variant="outlined" fullWidth>
+                                    <InputLabel id="language-select-label" sx={{ color: '#ffffff' }}>Language</InputLabel>
+                                    <Select
+                                        labelId="language-select-label"
+                                        id="language-select"
+                                        value={language}
+                                        onChange={handleLanguageChange}
+                                        label="Language"
+                                        sx={{
+                                            color: '#ffffff',
+                                            '.MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'rgba(255, 255, 255, 0.5)',
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'rgba(255, 255, 255, 0.7)',
+                                            },
+                                            '& .MuiSvgIcon-root': {
+                                                color: '#ffffff',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem value="English">English</MenuItem>
+                                        <MenuItem value="French">French</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormControl variant="outlined" fullWidth>
+                                    <InputLabel id="type-select-label" sx={{ color: '#ffffff' }}>Type</InputLabel>
+                                    <Select
+                                        labelId="type-select-label"
+                                        id="type-select"
+                                        value={type}
+                                        onChange={handleTypeChange}
+                                        label="Type"
+                                        sx={{
+                                            color: '#ffffff',
+                                            '.MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'rgba(255, 255, 255, 0.5)',
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'rgba(255, 255, 255, 0.7)',
+                                            },
+                                            '& .MuiSvgIcon-root': {
+                                                color: '#ffffff',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem value="Chat">Chat</MenuItem>
+                                        <MenuItem value="Program">Program</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                    </Box>
+
+                    {error && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {error}
+                        </Alert>
+                    )}
+
+                    {!isConnected && !error && (
+                        <Alert severity="info" sx={{ mb: 2 }}>
+                            Connecting to server...
+                        </Alert>
+                    )}
+
+                    <Paper
+                        elevation={6}
+                        sx={{
+                            flex: 1,
+                            mb: 3,
+                            p: 3,
+                            overflow: 'auto',
+                            bgcolor: '#ffffff',
+                            borderRadius: 4,
+                            border: `1px solid rgba(229, 21, 70, 0.2)`,
+                            '&::-webkit-scrollbar': {
+                                width: '8px',
+                            },
+                            '&::-webkit-scrollbar-track': {
+                                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                                borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                backgroundColor: 'rgba(229, 21, 70, 0.3)',
+                                borderRadius: '4px',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(229, 21, 70, 0.5)',
+                                },
+                            },
+                        }}
+                    >
+                        {messages.map((message, index) => (
+                            <Message
+                                key={index}
+                                text={message.text}
+                                isBot={message.isBot}
+                                isStreaming={message.isStreaming}
+                                type={type}
+                            />
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </Paper>
+
+                    <Paper
+                        component="form"
+                        onSubmit={handleSubmit}
+                        elevation={4}
+                        sx={{
+                            p: 2,
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            bgcolor: '#ffffff',
+                            borderRadius: 3,
+                            border: `1px solid rgba(229, 21, 70, 0.2)`,
+                        }}
+                    >
+                        <TextField
+                            fullWidth
+                            placeholder={getPlaceholderText()}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            disabled={!isWelcomed || !isConnected || isLoading}
+                            variant="outlined"
+                            multiline
+                            minRows={1}
+                            maxRows={4}
+                            inputProps={{
+                                autoComplete: "off"
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                    '& fieldset': {
+                                        borderColor: 'rgba(229, 21, 70, 0.3)',
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: 'rgba(229, 21, 70, 0.5)',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#e51546',
+                                    },
+                                },
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSubmit(e);
+                                }
+                            }}
+                        />
+                        <IconButton
+                            type="submit"
+                            disabled={!isWelcomed || !isConnected || isLoading || !input.trim()}
+                            sx={{
+                                ml: 1,
+                                color: '#e51546',
+                                '&:hover': {
+                                    bgcolor: 'rgba(229, 21, 70, 0.1)',
+                                },
+                                '&.Mui-disabled': {
+                                    color: 'rgba(229, 21, 70, 0.3)',
+                                },
+                            }}
+                        >
+                            <span className="material-icons">send</span>
+                        </IconButton>
+                        {/* Status indicator */}
+                        <Box sx={{ ml: 2, fontSize: 12, color: '#666666', display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="caption">
+                                Status: {!isConnected ? "Connecting..." : !isWelcomed ? "Waiting..." : "Ready"}
+                            </Typography>
+                            {(!isConnected || !isWelcomed) && <CircularProgress size={12} sx={{ ml: 1, color: '#e51546' }} />}
+                        </Box>
+                    </Paper>
+                </Container>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <App />
+            </ThemeProvider>,
+        );
+    </script>
+</body>
+
+</html>
