@@ -68,7 +68,7 @@ Main entry point for the AWS Lambda function:
 
 ## Data Flow
 
-1. The Lambda function is triggered (likely on a schedule or by content updates)
+1. The Lambda function is triggered
 2. The function scans DynamoDB to retrieve all snippet data
 3. Raw snippet data is parsed into Document objects with proper metadata
 4. The existing OpenSearch index is completely deleted
