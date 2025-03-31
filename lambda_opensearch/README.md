@@ -1,6 +1,6 @@
-# Dialectic Vector Indexing System (Full Reindex Version)
+# Learning Snippets Vector Indexing System (Full Reindex Version)
 
-A system for processing, embedding, and indexing educational content in OpenSearch to power the vector search capabilities of the Dialectic Snippet Bot. This variant implements a full reindex strategy rather than incremental updates.
+A system for processing, embedding, and indexing educational content in OpenSearch to power the vector search capabilities of the Learning Snippet Assistant Bot. This variant implements a full reindex strategy rather than incremental updates.
 
 ## System Overview
 
